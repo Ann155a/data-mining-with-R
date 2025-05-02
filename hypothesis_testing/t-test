@@ -1,0 +1,5 @@
+# Esempio test t indipendenti pag.34/47 lezione_test t
+data.frame<- GruppoA<-c(16, 18, 22, 22, 21, 21)
+            GruppoB<-c(20, 21, 15, 19, 19, 20)
+            
+t.test(data.frame, indipendent=TRUE, conf.level = .99)
