@@ -1,0 +1,5 @@
+library(BSDA)
+data = IQ_level_database
+
+# perform one sample z-test
+z.test(data, mu=100, sigma.x=16, conf.level = 0.99)
