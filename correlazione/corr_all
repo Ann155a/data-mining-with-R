@@ -1,0 +1,52 @@
+# All kind of correlations
+# cor(x, method = c("pearson", "kendall", "spearman"))
+
+# install.packages("Hmisc")
+library(Hmisc)
+library("PerformanceAnalytics")
+
+# Load data
+data("mtcars")
+my_data <- mtcars[, c(1,3,4,5,6,7)]
+
+# print the first 6 rows
+head(my_data, 6)
+
+res <- cor(my_data)
+round(res, 2)
+
+cor(my_data, use = "complete.obs")
+
+# Example usage
+# rcorr(x, type = c("pearson","spearman"))
+
+res2 <- rcorr(as.matrix(my_data))
+res2
+
+# Extract the correlation coefficients
+res2$r
+# Extract p-values
+res2$P
+
+# flattenCorrMatrix
+# cormat : matrix of the correlation coefficients
+# pmat : matrix of the correlation p-values
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+  )
+}
+
+res2<-rcorr(as.matrix(mtcars[,1:7]))
+flattenCorrMatrix(res2$r, res2$P)
+
+my_data <- mtcars[, c(1,3,4,5,6,7)]
+chart.Correlation(my_data, histogram=TRUE, pch=19)
+
+# Color map
+col<- colorRampPalette(c("blue", "white", "red"))(20)
+heatmap(x = res, col = col, symm = TRUE)
