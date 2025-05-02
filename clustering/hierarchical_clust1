@@ -1,0 +1,55 @@
+# Load iris dataset
+# For a full list of these datasets, type library(help = "datasets")
+library(datasets)
+data(iris)
+summary(iris)
+
+# Compute distance matrix on two numeric features
+datatab_dist <- dist(iris[, c(3, 4)], method = "euclidean")
+
+# Hierarchical clustering using complete linkage
+hc_complete <- hclust(datatab_dist, method = "complete")
+
+# Plot dendrogram
+plot(hc_complete, cex = 0.75)
+rect.hclust(hc_complete, k = 3)
+
+# Load required packages
+library(dendextend)
+library(factoextra)
+
+# Enhanced dendrogram
+hc_complete_dend <- as.dendrogram(hc_complete)
+plot(colour_branches(hc_complete_dend, k = 3))
+
+# k-means clustering (3 clusters) to compare results
+set.seed(32)
+datatab_kmeans <- kmeans(iris[, c(3, 4)], 3)
+
+# Agglomerative HC visualization
+fviz_cluster(object = list(data = iris,
+                           cluster = cutree(hc_complete, k = 3)),
+             choose.vars = c(3, 4),
+             geom = "point",
+             show.clust.cent = FALSE,
+             main = "Agglomerative HC - Complete Linkage") +
+  theme(legend.position = "none")
+
+# k-Means clustering visualization
+fviz_cluster(object = list(data = iris,
+                           cluster = datatab_kmeans$cluster),
+             choose.vars = c(3, 4),
+             geom = "point",
+             show.clust.cent = FALSE,
+             main = "k-Means") +
+  theme(legend.position = "none")
+
+# True species labels visualization
+fviz_cluster(object = list(data = iris,
+                           cluster = as.numeric(iris$Species)),
+             choose.vars = c(3, 4),
+             geom = "point",
+             show.clust.cent = FALSE,
+             main = "True Species Labels") +
+  theme(legend.position = "none")
+
