@@ -1,0 +1,105 @@
+# Install and load the 'rattle' package (or 'datasets' if it's from there)
+install.packages("rattle")
+library(rattle)
+
+data() 
+
+data(wine) 
+
+wine
+
+# Lets clean the unnecessary items
+gc()
+rm(list = ls(all = TRUE))
+
+packages<-function(x){
+  x<-as.character(match.call()[[2]])
+  if (!require(x,character.only=TRUE)){
+    install.packages(pkgs=x,repos="http://cran.r-project.org")
+    require(x,character.only=TRUE)
+  }
+}
+
+library(tidyverse) # data manipulation
+library(corrplot)
+library(gridExtra)
+library(GGally)
+library(cluster) # clustering algorithms 
+library(factoextra) # cl
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+summary(wine)
+
+str(wine)
+
+wine %>%
+  gather(attributes, value, 1:13) %>%
+  mutate(value = as.numeric(value)) %>%  # Ensure value is numeric
+  ggplot(aes(x = value)) +
+  geom_histogram(fill = 'lightblue2', color = 'black', bins = 30) +  # Add bins for histograms
+  facet_wrap(~attributes, scales = 'free_x') +
+  labs(x = "Values", y = "Frequency") +
+  theme_bw()
+
+wine_numeric <- wine %>% select_if(is.numeric)
+
+corrplot(cor(wine_numeric), type = 'upper', method = 'number', tl.cex = 0.9)
+
+colnames(wine)
+
+# Relationship between Phenols and Flavanoids
+ggplot(wine, aes(x = Phenols, y = Flavanoids)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE) +
+  theme_bw()
+
+winesNorm <- as.data.frame(scale(wine_numeric))
+head(winesNorm)
+
+set.seed(123)
+
+wines_K2 <- kmeans(winesNorm, centers = 2, nstart = 25)
+print(wines_K2)
+
+fviz_cluster(wines_K2, data = winesNorm)
+
+# Clusters to which each point is associated
+wines_K2$cluster
+
+# Cluster centers
+wines_K2$centers
+
+# Cluster size
+wines_K2$size
+
+# Between clusters sum of square
+wines_K2$betweenss
+
+# Within cluster sum of square
+wines_K2$withinss
+
+# Total with sum of square
+wines_K2$tot.withinss
+
+# Total sum of square
+wines_K2$totss
+
+wines_K3 <- kmeans(winesNorm, centers = 3, nstart = 25)
+wines_K4 <- kmeans(winesNorm, centers = 4, nstart = 25)
+wines_K5 <- kmeans(winesNorm, centers = 5, nstart = 25)
+
+p1 <- fviz_cluster(wines_K2, geom = "point", data = winesNorm) + ggtitle(" K = 2")
+p2 <- fviz_cluster(wines_K3, geom = "point", data = winesNorm) + ggtitle(" K = 3")
+p3 <- fviz_cluster(wines_K4, geom = "point", data = winesNorm) + ggtitle(" K = 4")
+p4 <- fviz_cluster(wines_K5, geom = "point", data = winesNorm) + ggtitle(" K = 5")
+
+grid.arrange(p1, p2, p3, p4, nrow = 2)
+
+
+
+
+
+
+
