@@ -1,0 +1,26 @@
+# Bar charts
+setwd("~/Downloads")
+
+# Load necessary libraries
+library(tidyverse)
+library(ggpubr)
+library(ggplot2)
+library(ggthemes)
+
+df <- iris
+
+colnames(df)[colnames(df) == "Species"] <- "State"
+colnames(df)[colnames(df) == "Sepal.Length"] <- "Percentage"
+
+state_colors <- c("setosa" = "lightcoral", "versicolor" = "hotpink1", "virginica" = "mediumorchid1")
+
+# bar chart with different colors for each state and labels at the top
+ggplot(df, aes(x = State, y = Percentage, fill = State)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = paste0(round(Percentage, 1), "%")), vjust = -0.5, size = 3) +  
+  labs(title = "% of Sepal Length by Species",  #
+       x = "",
+       y = "Sepal Length (cm)") +  
+  theme_classic2() +
+  scale_fill_manual(values = state_colors)
+
