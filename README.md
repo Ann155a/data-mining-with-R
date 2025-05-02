@@ -1,7 +1,7 @@
 # 🔧 Data Mining Techniques in R
 This repository contains a collection of R code snippets and utilities for common data mining and statistical tasks. 
 Topics include:
-- Exploratory data analysis `(EDA)`
+- Exploratory data analysis **(EDA)**
 - Statistical hypothesis testing
 - Data visualization and charting with `ggplot2` and base R
 - Web scraping using `rvest` and related packages
