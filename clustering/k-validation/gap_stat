@@ -1,0 +1,22 @@
+# Method Gap stat + pca for visualisations
+
+# Load necessary libraries
+library(NbClust)
+library(cluster)
+library(clustertend)
+library(factoextra)
+library(ggplot2)
+
+# Using the pam method with the Gap statistic
+fviz_nbclust(iris[, -5],  # Exclude the 'Species' column 
+             FUNcluster = pam,  # PAM method for clustering
+             method = "gap_stat") +
+  labs(subtitle = "Gap_stat method")
+
+fviz_pca_ind(prcomp(iris[, -5]),  # Perform PCA 
+             title = "Dati regionali", 
+             palette = "jco", 
+             geom = "point", 
+             ggtheme = theme_classic(), 
+             legend = "bottom") +
+  labs(subtitle = "Visually inspect clusters")
