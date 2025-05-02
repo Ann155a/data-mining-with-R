@@ -1,0 +1,16 @@
+# Method k-means, Euclidean
+
+# Load necessary libraries
+library(NbClust)
+library(cluster)
+library(clustertend)
+library(factoextra)
+library(ggplot2)
+
+clusternum <- NbClust(data = iris[, -5],   # Exclude the 'Species' column (non-numeric)
+                      distance = "euclidean", 
+                      method = "kmeans")
+
+clusternum
+
+fviz_nbclust(clusternum, method = "wss")  
