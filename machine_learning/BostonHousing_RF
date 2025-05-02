@@ -1,0 +1,109 @@
+
+#install.packages("randomForest")
+#install.packages("mlbench")
+#install.packages("dplyr")
+
+library(mlbench)
+library(dplyr)
+library(randomForest)
+
+data("BostonHousing")
+
+summary(BostonHousing)
+
+# Prepariamo i dati per l’analisi
+set.seed(100)
+
+BostonHousing$chas <- factor(BostonHousing$chas, levels = 0:1, labels = c("No", "Yes"))
+BostonHousing$rad <- factor(BostonHousing$rad, ordered = TRUE)
+
+BostonHousing <- BostonHousing %>%
+  select(medv, age, lstat, rm, zn, indus, 
+         chas, nox, age, dis, rad, tax, crim, 
+         b, ptratio)
+
+train <- sample(nrow(BostonHousing), 400)
+bh_train <- BostonHousing[train,]
+bh_test <- BostonHousing[-train,]
+
+rf_fit <- randomForest(medv ~ ., data = bh_train)
+
+rf_fit
+
+plot(rf_fit)
+
+library(ggplot2)
+
+data_gr <- bh_train %>%
+  mutate(set = "train") %>%
+  bind_rows(bh_test %>% mutate(set = "test"))
+
+data_gr$fit <- predict(rf_fit, data_gr)
+
+ggp <- ggplot(data = data_gr, mapping = aes(x = fit, y = medv)) +
+  geom_point(aes(colour = set), alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0) +
+  geom_smooth(method = "lm", se = FALSE, aes(colour = set), alpha = 0.6)
+
+print(ggp)
+
+# Variare il numero di predittori 
+set.seed(100)
+oob_err <- double(13)
+test_err <- double(13)
+
+# mtry è il numero di variabili scelte ad ogni split
+for (mtry in 1:13) {
+  rf <- randomForest(medv ~ . , data = bh_train, mtry = mtry, ntree = 400)
+  oob_err[mtry] <- rf$mse[400] #Errore per tutti gli alberi adatti
+
+  pred <- predict(rf, bh_test) #Previsioni sul set di test per ciascun albero
+  test_err[mtry] <- with(bh_test, mean( (medv - pred)^2)) #Mean Squared Error per l'insieme di test
+}
+
+# Errore sull'insieme di Test
+test_err
+
+# Stima dell'errore Out of Bag
+oob_err
+
+# Tracciare graficamente l'errore dell'insieme di test e l'Errore Out of Bag
+
+ds_gr <- data_frame(type = c(rep("test", length(test_err)), rep("oob", length(oob_err))),
+                    mtry = c(1:length(test_err), 1:length(oob_err)),
+                    error = c(test_err, oob_err))
+
+ggp <- ggplot(data = ds_gr, mapping = aes(x = mtry, y = error)) +
+  geom_line(aes(colour = type)) +
+  geom_point(aes(colour = type)) +
+  ggtitle("OOB e Errore di test error vs. Numero di variabili negli split (mtry)")
+
+
+print(ggp)
+
+# Proviamo il modello con mtry = 6
+set.seed(100)
+(rf_fit <- randomForest(medv ~ ., data = bh_train, 
+                       mtry  = 6))
+
+plot(rf_fit)
+
+data_gr <- bh_train %>%
+  mutate(set = "train") %>%
+  bind_rows(bh_test %>% mutate(set = "tests"))
+
+data_gr$fit <- predict(rf_fit, data_gr)
+
+mse <- data_gr %>%
+  filter(set == "test") %>%
+  summarise(mse = mean((fit-medv)^2)) %>%
+  pull()
+
+print(mse)
+
+ggp <- ggplot(data = data_gr, mapping = aes(x = fit, y = medv)) + 
+  geom_point(aes(colour = set), alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0) + 
+  geom_smooth(method = "lm", se = FALSE, aes(colour = set), alpha = 0.6)
+
+print(ggp)
