@@ -4,7 +4,7 @@ Topics include:
 - Exploratory data analysis **(EDA)**
 - Statistical hypothesis testing
 - Data visualization and charting with `ggplot2` 
-- Web scraping using `rvest` and related packages
+- Web scraping using `rvest` 
 
 _(This repository will be updated periodically.)_
 
