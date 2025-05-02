@@ -1,0 +1,23 @@
+# Bar charts
+setwd("~/Downloads")
+
+# Load necessary libraries
+library(tidyverse)
+library(ggsci)
+library(ggpubr)
+library(ggplot2)
+library(scales)
+
+df <- iris
+
+colnames(df)[colnames(df) == "Species"] <- "State"
+colnames(df)[colnames(df) == "Sepal.Length"] <- "Percentage"
+
+ggplot(df, aes(x = State, y = Percentage, fill = State)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Sepal Length by Species",
+       x = "Species",
+       y = "Sepal Length (cm)") +
+  theme_minimal() +
+  scale_fill_npg(palette = "nrc")
+
