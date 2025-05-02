@@ -1,0 +1,9 @@
+Sys.setenv(MAKEFLAGS = paste0("-j",parallel::detectCores()))
+
+install.packages(c("StanHeaders","rstan"),type="source")
+
+library(rstan)
+
+(mc.cores = parallel::detectCores())
+
+(auto_write = TRUE)
