@@ -1,0 +1,7 @@
+# load data
+data <- iris
+
+correlation <- cor(iris[, -5], method = c("pearson"))
+# for 2 columns use cor.test
+
+write.xlsx(correlation, "iris_spearman.xlsx")
