@@ -8,3 +8,8 @@ Topics include:
 I would like to provide this modular, for reusable code for students, researchers, and data enthusiasts working with R.
 
 _(This repository will be updated periodically.)_
+
+________
+## Install RStudio:
+You can install RStudio [here](https://posit.co/download/rstudio-desktop/)
+
