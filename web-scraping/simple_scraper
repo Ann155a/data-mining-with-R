@@ -1,0 +1,15 @@
+# Code for web-scrapping
+library(rvest)
+library(dplyr)
+
+link = "https://www.imdb.com/chart/top/?ref_=nv_mv_250"
+page = read_html(link)
+
+name = page %>% html_elements(".titleColumn a") %>% html_text()
+year = page %>% html_elements(".secondaryInfo") %>% html_text()
+rate = page %>% html_elements("strong") %>% html_text()
+
+
+films = data.frame(name, year, rate, stringsAsFactors = FALSE)
+
+print(films)
