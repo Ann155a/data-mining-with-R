@@ -1,0 +1,11 @@
+setwd("~/Downloads")
+
+library(caret)
+data = iris
+        
+process <- preProcess(as.data.frame(data), method=c("range"))
+norm_scale <- predict(process, as.data.frame(data))
+
+library(xlsx)
+write.xlsx(norm_scale, file = "iris.xlsx", sheetName = "min.max")
+
