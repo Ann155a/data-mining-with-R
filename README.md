@@ -5,8 +5,7 @@ Topics include:
 - Statistical hypothesis testing
 - Machine Learning models
 - Data visualization and charting with `ggplot2`
-
-_(This repository will be updated periodically.)_ /
+- 
 _Latest update: Pattern mining in R_
 
 ________
